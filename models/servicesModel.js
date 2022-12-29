@@ -42,14 +42,14 @@ const Services = {
         }
     },
 
-    async getFullService(id, connection) {
+    async getFullService(body, connection) {
         let errorMessage = 'OK';
 
         const queryGetFullService = `SELECT *, services.name AS service_name, services.price AS service_price FROM services
                                     JOIN staff ON services.staff_id=staff.id
                                     JOIN images ON services.image_id=images.id
                                     JOIN free_dates ON staff.id=free_dates.staff_id
-                                    WHERE services.id = "${id}"`;
+                                    WHERE services.id = "${body.id}"`;
 
         const [fullServiceRows, fullServiceFields] = await connection.execute(queryGetFullService);
 

@@ -54,7 +54,7 @@ const Records = {
         date = String(date).split('T')[0]
 
         const queryCreateRecord = `INSERT INTO records(created_at, deleted_at, date, user_id, service_id)
-                                    VALUES ("${date}", "${record.date}", "${record.date}", "${record.id}", "${record.user_id}")`;
+                                    VALUES ("${date}", "${record.date}", "${record.date}", "${record.user_id}", "${record.id}")`;
 
         const [createRecordRows, createRecordFields] = await connection.execute(queryCreateRecord);
 

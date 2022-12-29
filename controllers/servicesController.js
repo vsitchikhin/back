@@ -18,7 +18,7 @@ const ServicesController = {
         })
     },
 
-    async getFullServices(request, response, id) {
+    async getFullServices(request, response) {
         const connection = await mysql.createConnection(config);
 
         let body = '';
@@ -27,7 +27,10 @@ const ServicesController = {
         })
 
         await request.on('end', async () => {
-            const res = await model.getFullService(id, connection).then();
+            body = JSON.parse(body);
+
+            model.constructor(body);
+            const res = await model.getFullService(body, connection).then();
 
             response.end(JSON.stringify(res));
         })

@@ -34,16 +34,10 @@ const server = http.createServer(async (request, response) => {
               break;
           }
       }
-
-      if (urlParts.pathname.includes('/service/')) {
-          const pathArr = urlParts.pathname.split('/');
-          const id = pathArr.slice(-1);
-          await servicesController.getFullServices(request, response, id)
-      }
   }
 
   if (request.method === 'POST') {
-      switch (urlParts.pathname) {
+    switch (urlParts.pathname) {
       case "/login": {
         await registrate(request, response);
         break;
@@ -64,6 +58,12 @@ const server = http.createServer(async (request, response) => {
           await recordsController.getRecords(request, response);
           break;
       }
+    }
+
+    if (urlParts.pathname.includes('/service/')) {
+        const pathArr = urlParts.pathname.split('/');
+        const id = pathArr.slice(-1);
+        await servicesController.getFullServices(request, response)
     }
   }
 }).listen(4000);
