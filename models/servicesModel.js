@@ -27,14 +27,13 @@ const Services = {
         this.staffImageId = data.staffImageId;
     },
 
-    async getShortService(service, connection) {
+    async getShortService(connection) {
         let errorMessage = 'OK';
 
-        const queryGetShortService = `SELECT * FROM services
-                                      JOIN images ON services.image_id=images.id
-                                      WHERE services.id = "${service.id}"`;
+        const queryGetShortService = `SELECT *, services.id AS service_id FROM services
+                                      JOIN images ON services.image_id=images.id`;
 
-        const [shortServiceRows, shortServiceFields] = connection.execute(queryGetShortService);
+        const [shortServiceRows, shortServiceFields] = await connection.execute(queryGetShortService);
 
         return {
             error: false,
@@ -46,13 +45,13 @@ const Services = {
     async getFullService(id, connection) {
         let errorMessage = 'OK';
 
-        const queryGetFullService = `SELECT * FROM services
+        const queryGetFullService = `SELECT *, services.name AS service_name, services.price AS service_price FROM services
                                     JOIN staff ON services.staff_id=staff.id
                                     JOIN images ON services.image_id=images.id
                                     JOIN free_dates ON staff.id=free_dates.staff_id
                                     WHERE services.id = "${id}"`;
 
-        const [fullServiceRows, fullServiceFields] = connection.execute(queryGetFullService);
+        const [fullServiceRows, fullServiceFields] = await connection.execute(queryGetFullService);
 
         return {
             error: false,

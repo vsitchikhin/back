@@ -15,9 +15,13 @@ const Records = {
         this.serviceId = data.service_id;
     },
 
-    async getRecords(id, connection) {
+    async getRecords(body, connection) {
         let errorMessage = 'OK';
-        const queryGetRecords = `SELECT * FROM records WHERE user_id = "${id}"`
+        const queryGetRecords = `SELECT *, records.id as id, services.name as service_name, staff.name as master_name, services.price as price
+                                 FROM records
+                                 JOIN services on services.id=records.service_id
+                                 JOIN staff on staff.id=services.staff_id
+                                 WHERE user_id = ${body.user_id}`
 
         const [recordsRows, recordsFields] = await connection.execute(queryGetRecords);
 
@@ -42,10 +46,17 @@ const Records = {
             }
         }
 
-        const queryCreateRecord = `INSERT INTO records(created_at, deleted_at, date, user_id, service_id)
-                                    VALUES (${Date.now()}, ${record.date}, ${record.user_id}, ${record.service_id})`;
+        record.date = record.date.toString().split('T')[0]
 
-        const [createRecordRows, createRecordFields] = connection.execute(queryCreateRecord);
+        let date = new Date();
+        date = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+
+        date = String(date).split('T')[0]
+
+        const queryCreateRecord = `INSERT INTO records(created_at, deleted_at, date, user_id, service_id)
+                                    VALUES ("${date}", "${record.date}", "${record.date}", "${record.id}", "${record.user_id}")`;
+
+        const [createRecordRows, createRecordFields] = await connection.execute(queryCreateRecord);
 
         return {
             error: false,
@@ -56,6 +67,8 @@ const Records = {
 
     async deleteRecord(record, connection) {
       let errorMessage = 'OK';
+      console.log(record)
+        console.log(record.id);
 
       const queryDeleteRecord = `DELETE FROM records WHERE id = ${record.id}`
       const isRecordExists = await this.checkIsRecordExists(record, connection);
@@ -82,20 +95,20 @@ const Records = {
           }
       }
 
-      const [deleteRecordRows, deleteRecordFields] = connection.execute(queryDeleteRecord);
+      await connection.execute(queryDeleteRecord);
 
       return {
           error: false,
           errorMessage: errorMessage,
-          payload: deleteRecordRows,
+          payload: undefined,
       }
 
     },
 
     async checkIsRecordExists(record, connection) {
-        const queryCheckRecordExists = `SELECT count(*) AS records FROM records WHERE user_id = "${record.user_id}" and "date" = "${record.date}" and service_id = "${record.service_id}"`;
+        const queryCheckRecordExists = `SELECT count(*) AS records FROM records WHERE id = "${record.id}"`;
 
-        const [countRecordsRows, countRecordFields] = connection.execute(queryCheckRecordExists);
+        const [countRecordsRows, countRecordFields] = await connection.execute(queryCheckRecordExists);
 
         return countRecordsRows[0].records > 0;
     }

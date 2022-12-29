@@ -17,16 +17,9 @@ module.exports = async function createNewUser(request, response) {
 
   await request.on('end', async () => {
     body = JSON.parse(body);
-    body.user_data.password = await bcrypt.hash(body.user_data.password, salt);
+    body.password = await bcrypt.hash(body.password, salt);
 
-    const data = {
-      ...body.user,
-      ...body.user_data,
-      ...body.passport,
-      teacher: body.teacher || undefined,
-    };
-
-    newUser.constructor(data);
+    newUser.constructor(body);
     const res = await newUser.createUser(connection).then();
 
     response.end(JSON.stringify(res));

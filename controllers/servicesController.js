@@ -12,10 +12,7 @@ const ServicesController = {
         })
 
         await request.on('end', async () => {
-            body = JSON.parse(body);
-
-            model.constructor(body);
-            const res = await model.getShortService(body, connection).then();
+            const res = await model.getShortService(connection).then();
 
             response.end(JSON.stringify(res));
         })
@@ -30,9 +27,6 @@ const ServicesController = {
         })
 
         await request.on('end', async () => {
-            body = JSON.parse(body);
-
-            model.constructor(body);
             const res = await model.getFullService(id, connection).then();
 
             response.end(JSON.stringify(res));

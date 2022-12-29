@@ -5,9 +5,9 @@ const user = process.env.DB_USER;
 const base = process.env.DATABASE;
 const password = process.env.DB_PASSWORD;
 
-module.exports =  {
+module.exports = {
   host: host,
   user: user,
-  database: base,
   password: password,
+  database: base,
 }
