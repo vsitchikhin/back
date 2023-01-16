@@ -15,6 +15,7 @@ const Records = {
         this.serviceId = data.service_id;
     },
 
+    
     async getRecords(body, connection) {
         let errorMessage = 'OK';
         const queryGetRecords = `SELECT *, records.id as id, services.name as service_name, staff.name as master_name, services.price as price
@@ -48,10 +49,6 @@ const Records = {
 
         record.date = record.date.toString().split('T')[0]
 
-        let date = new Date();
-        date = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
-
-        date = String(date).split('T')[0]
 
         const queryCreateRecord = `INSERT INTO records(created_at, deleted_at, date, user_id, service_id)
                                     VALUES ("${date}", "${record.date}", "${record.date}", "${record.user_id}", "${record.id}")`;
